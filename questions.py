@@ -1,4 +1,5 @@
 import random
+import os
 # Preguntas para el juego
 questions = [
 "¿Que funcion se usa para obtener la longitud de una cadena en Python?",
@@ -26,31 +27,35 @@ correct_answers_index = [1, 2, 0, 3, 1]
 #Puntaje del jugador
 score = 0
 
-# El usuario debera contestar 3 preguntas
-for _ in range(3):
-    # Se selecciona una pregunta aleatoria
-    question_index = random.randint(0, len(questions) - 1)
+#Se seleccionan tres preguntas al azar
+questions_to_ask = random.choices(list(zip(questions, answers, correct_answers_index)), k=3)
 
-    # Se muestra la pregunta y las respuestas posibles
-    print(questions[question_index])
-    for i, answer in enumerate(answers[question_index]):
-        print(f"{i + 1}. {answer}")
+# El usuario debera contestar las tres preguntas seleccionadas
+# Se muestra la pregunta y las respuestas posibles
+
+for question, answers, correct_answers_index in questions_to_ask:
+    print(question)
+    print(*[f"{i + 1}. {answer}" for i, answer in enumerate(answers)], sep="\n")
 
     # El usuario tiene 2 intentos para responder correctamente
     for intento in range(2):
-        user_answer = int(input("Respuesta: ")) - 1
+        user_answer = input("Respuesta: ")
+
         # Se verifica si el valor ingresado es valido
         if not user_answer.isdigit():
             print("Respuesta no válida. Ingrese un número entre 1 y 4")
             sys.exit(1)
 
+        # Se convierte a entero después de la verificación para comprobar el rango
+        user_answer = int(user_answer) - 1
+
         # Se verifica si el valor ingresado está dentro del rango de respuestas posibles
-        if user_answer >= len(answers[question_index]):
+        if user_answer >= len(answers):
             print("Respuesta no válida. Ingrese un número entre 1 y 4")
             sys.exit(1)
 
         # Se verifica si la respuesta es correcta
-        if user_answer == correct_answers_index[question_index]:
+        if user_answer == correct_answers_index:
             print("¡Correcto!")
             score += 1
             break
@@ -59,11 +64,10 @@ for _ in range(3):
             score -= 0.5
     else:
     # Si el usuario no responde correctamente después de 2 intentos, se muestra la respuesta correcta
-        print("Incorrecto. La respuesta correcta es:")
-        print(answers[question_index][correct_answers_index[question_index]])
+        print("Incorrecto. La respuesta correcta es: ", answers[correct_answers_index])
 
 # Se imprime un blanco al final de la pregunta
 print()
 
 #Se imprime el puntaje final 
-print("Tu puntaje final es: {score}")
+print(f"Tu puntaje final es: {score}")
